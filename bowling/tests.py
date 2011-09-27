@@ -1,7 +1,7 @@
 
 import mock
 from django.utils import unittest
-from unittest import TestCase
+from django.test import TestCase
 
 from bowling.game import BowlingGame, Frame, BowlingLane, ADD_BOWLER_PROMPT, THROW_BALL_PROMPT
 class FrameTests(TestCase):
@@ -390,10 +390,17 @@ class BowlingLaneTests(TestCase):
             ((game,), {}),
         ], get_throw.call_args_list)
 
-    @unittest.skipIf(True, "Come back to this")
-    def test_saves_the_name_and_score_of_all_games(self):
-        pass
 
+    @mock.patch('bowling.game.BowlingGame.score_for_frame')
+    def test_saves_the_name_and_score_of_all_games(self, score_for_frame):
+        self.lane._bowlers = [['carl', BowlingGame()]]
+
+        score_for_frame.return_value = 1
+
+        with mock.patch('bowling.models.BowlingModel.objects.create') as create:
+            self.lane.display_results()
+
+        create.assert_called_once_with(name="carl", score="[1]" * 10)
 
 class BowlingModelTests(TestCase):
     def test_saves_bowler_name(self):
@@ -403,8 +410,3 @@ class BowlingModelTests(TestCase):
         carl_model = BowlingModel.objects.get(name='carl')
 
         self.assertEqual(model, carl_model)
-
-    def test_save_bowler_score(self):
-        model = BowlingModel(name='carl', score='[2][6][12][20][31][33][37][43][51][71]')
-        model.save()
-

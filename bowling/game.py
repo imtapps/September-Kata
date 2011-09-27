@@ -1,3 +1,5 @@
+from bowling.models import BowlingModel
+
 class Frame(object):
 
     def __init__(self, number):
@@ -157,7 +159,9 @@ class BowlingLane(object):
         print "\n\nFinal Score\n-----------"
         for name, game in self._bowlers:
             score = ["[%s]" % game.score_for_frame(f) for f in range(1, 11)]
-            print "%s: %s" % (name, ''.join(score))
+            score_string = ''.join(score)
+            print "%s: %s" % (name, score_string)
+            BowlingModel.objects.create(name=name, score=score_string)
         print "\n\n"
 
 def main():
