@@ -106,6 +106,9 @@ class BowlingGame(object):
                 break
         return total_score
 
+    def scores_for_game(self):
+        return [self.score_for_frame(f) for f in range(1, 11)]
+
     def pins_for_frame(self, frame_number):
         """
         self.frames is just a list, so it has a zero-based index.
@@ -155,13 +158,19 @@ class BowlingLane(object):
 
     def display_results(self):
         print "\n\nFinal Score\n-----------"
-        for name, game in self._bowlers:
-            score = ["[%s]" % game.score_for_frame(f) for f in range(1, 11)]
-            print self.format_results(name, score)
+        for line in self.formatted_scores:
+            print line
         print "\n\n"
 
-    def format_results(self, name, score):
-        return "%s: %s" % (name, ''.join(score))
+    def format_results(self, name, scores):
+        return "%s: %s" % (name, ''.join(["[%s]" % score for score in scores]))
+
+    @property
+    def formatted_scores(self):
+        scores = []
+        for name, game in self._bowlers:
+            scores.append(self.format_results(name, game.scores_for_game()))
+        return scores
 
 def main():
     lane = BowlingLane()
