@@ -3,15 +3,12 @@ import mock
 from django.utils import unittest
 from unittest import TestCase
 
-from django_bowling.bowling.game import BowlingGame, Frame, BowlingLane, ADD_BOWLER_PROMPT, THROW_BALL_PROMPT
-from django_bowling.bowling.models import BowlingModel
-
-
+from bowling.game import BowlingGame, Frame, BowlingLane, ADD_BOWLER_PROMPT, THROW_BALL_PROMPT
 class FrameTests(TestCase):
 
     def setUp(self):
         self.frame = Frame(1)
-        
+
     def test_starts_with_roll_count_of_zero(self):
         self.assertEqual(0, self.frame.roll_count)
 
@@ -44,7 +41,7 @@ class FrameTests(TestCase):
 
     def test_is_strike_returns_false_when_no_rolls(self):
         self.assertEqual(False, self.frame.is_strike)
-        
+
     def test_is_spare_returns_false_when_no_rolls(self):
         self.assertEqual(False, self.frame.is_spare)
 
@@ -107,6 +104,9 @@ class FrameTests(TestCase):
     def test_total_pins_return_sum_of_rolls(self):
         self.frame.rolls =[1, 2]
         self.assertEqual(3, self.frame.total_pins)
+
+
+from bowling.models import BowlingModel
 
 class BowlingTests(TestCase):
 
@@ -259,7 +259,7 @@ class BowlingLaneTests(TestCase):
         input_mock.assert_called_with(ADD_BOWLER_PROMPT)
 
     @mock.patch('__builtin__.raw_input')
-    @mock.patch('django_bowling.bowling.game.BowlingLane.add_bowler')
+    @mock.patch('bowling.game.BowlingLane.add_bowler')
     def test_calls_add_bowler_4_times_with_valid_raw_input_value(self, add_bowler, input_mock):
         lane = BowlingLane()
         lane.prompt_for_bowlers()
@@ -267,7 +267,7 @@ class BowlingLaneTests(TestCase):
         self.assertEqual(4, add_bowler.call_count)
 
     @mock.patch('__builtin__.raw_input')
-    @mock.patch('django_bowling.bowling.game.BowlingLane.add_bowler')
+    @mock.patch('bowling.game.BowlingLane.add_bowler')
     def test_does_not_call_add_bowler_when_no_input_value(self, add_bowler, input_mock):
         input_mock.return_value = ''
 
@@ -276,7 +276,7 @@ class BowlingLaneTests(TestCase):
         self.assertFalse(add_bowler.called)
 
     @mock.patch('__builtin__.raw_input')
-    @mock.patch('django_bowling.bowling.game.BowlingLane.add_bowler')
+    @mock.patch('bowling.game.BowlingLane.add_bowler')
     def test_breaks_from_add_bowler_loop_when_no_name_entered(self, add_bowler, input_mock):
 
         name_list = ['aaron', 'dave', '']
@@ -295,13 +295,13 @@ class BowlingLaneTests(TestCase):
             (('dave',), {}),
         ], add_bowler.call_args_list)
 
-    @mock.patch('django_bowling.bowling.game.BowlingGame')
+    @mock.patch('bowling.game.BowlingGame')
     def test_player_is_added_to_bowlers(self, game_class):
         self.lane.add_bowler('dave')
         self.assertEqual([['dave', game_class.return_value]], self.lane._bowlers)
         game_class.assert_called_once_with()
 
-    @mock.patch('django_bowling.bowling.game.BowlingGame')
+    @mock.patch('bowling.game.BowlingGame')
     def test_multiple_players_are_added_to_bowlers(self, game_class):
 
         dave_game = mock.Mock(spec_set=BowlingGame)
@@ -318,7 +318,7 @@ class BowlingLaneTests(TestCase):
             ['aaron', aaron_game]
         ], self.lane._bowlers)
 
-    @mock.patch('django_bowling.bowling.game.BowlingLane._get_all_bowler_throws')
+    @mock.patch('bowling.game.BowlingLane._get_all_bowler_throws')
     def test_play_game_calls_get_all_bowler_throws_for_1_thru_10(self, get_all_throws):
         self.lane.play_game()
         self.assertEqual([
@@ -334,7 +334,7 @@ class BowlingLaneTests(TestCase):
             ((10, ),{}),
         ], get_all_throws.call_args_list)
 
-    @mock.patch('django_bowling.bowling.game.BowlingLane._get_user_throws')
+    @mock.patch('bowling.game.BowlingLane._get_user_throws')
     def test_get_user_throws_for_each_bowler(self, get_user_throws):
         game_1 = mock.Mock(spec_set=BowlingGame)
         game_2 = mock.Mock(spec_set=BowlingGame)
@@ -366,7 +366,7 @@ class BowlingLaneTests(TestCase):
         lane._get_throw(game)
         game.throw.assert_called_once_with(10)
 
-    @mock.patch('django_bowling.bowling.game.BowlingLane._get_throw')
+    @mock.patch('bowling.game.BowlingLane._get_throw')
     def test_gets_user_throw_only_once_when_game_is_complete(self, get_throw):
         game = mock.Mock(spec_set=BowlingGame)
         game.active_frame.is_complete.return_value = True
@@ -374,7 +374,7 @@ class BowlingLaneTests(TestCase):
         self.lane._get_user_throws(game)
         get_throw.assert_called_once_with(game)
 
-    @mock.patch('django_bowling.bowling.game.BowlingLane._get_throw')
+    @mock.patch('bowling.game.BowlingLane._get_throw')
     def test_get_throw_called_utill_frame_is_complete(self, get_throw):
 
         is_complete_values = [False, True]
