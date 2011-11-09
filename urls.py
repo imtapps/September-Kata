@@ -4,14 +4,8 @@ from django.conf.urls.defaults import patterns, include, url
 # from django.contrib import admin
 # admin.autodiscover()
 
+from bowling import views
 urlpatterns = patterns('',
-    # Examples:
-    # url(r'^$', 'bowling_project.views.home', name='home'),
-    # url(r'^bowling_project/', include('bowling_project.foo.urls')),
-
-    # Uncomment the admin/doc line below to enable admin documentation:
-    # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
-
-    # Uncomment the next line to enable the admin:
     # url(r'^admin/', include(admin.site.urls)),
+    url(r'^bowling/(?P<bowler>\w+)/', views.BowlerScores.as_view(), name='bowling_scores'),
 )

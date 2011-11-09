@@ -7,6 +7,7 @@ Replace this with more appropriate tests for your application.
 
 import mock
 
+from django.core.urlresolvers import reverse
 from django.test import TestCase
 
 
@@ -429,10 +430,26 @@ class BowlingLaneTests(TestCase):
         self.assertEqual("eric", saved_score.name)
         self.assertEqual("123", saved_score.score)
 
+class ViewTests(TestCase):
 
+    def test_shows_score_for_user_on_page(self):
+        score = '[30][60][90][120][150][180][210][240][270][300]'
+        bowling_result = models.BowlingScore.objects.create(name='Aaron', score=score)
 
+        response = self.client.get(reverse('bowling_scores', kwargs={'bowler': bowling_result.name}))
+        self.assertContains(response, score)
 
+    def test_shows_bowler_not_found_when_doesnt_have_bowler(self):
+        name = 'Dennis'
+        response = self.client.get(reverse('bowling_scores', kwargs={'bowler': name}))
+        self.assertContains(response, "Can't find any games for {0}.".format('Dennis'))
 
+    def test_shows_count_of_bowling_games_for_bowler(self):
+        name = 'Dennis'
+        score = '[30][60][90][120][150][180][210][240][270][300]'
+        models.BowlingScore.objects.create(name=name, score=score)
+        models.BowlingScore.objects.create(name=name, score=score)
+        models.BowlingScore.objects.create(name=name, score=score)
 
-
-        
+        response = self.client.get(reverse('bowling_scores', kwargs={'bowler': name}))
+        self.assertContains(response, "{0} has bowled 3 games".format('Dennis'))
