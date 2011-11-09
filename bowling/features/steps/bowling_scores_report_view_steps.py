@@ -8,10 +8,6 @@ def go_to_page(step, page_name, arg_name, arg_val):
     step.scenario.browser = Client()
     step.scenario.response = step.scenario.browser.get(reverse(page_name, kwargs={arg_name:arg_val}))
 
-@step(u'(?:Then|And) I should see "([^"].*)" on the web page')
+@step(u'(?:Then|And) I should see "([^"]*)" on the web page')
 def assert_webpage_contains(step, stuff):
     assert stuff in step.scenario.response.content, "'{0}' is not on the page".format(stuff)
-
-@step(u'(?:Then|And) I should see the score "([^"]*)" on the web page')
-def assert_webpage_contains(step, score):
-    assert score in step.scenario.response.content, "'{0}' is not on the page".format(score)

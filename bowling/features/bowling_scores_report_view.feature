@@ -30,12 +30,12 @@ Feature: Django bowling scores report view
             | carl  | 1,1 | 2,2 | 3,3 | 4,4 | 5,5 | 6,0 | 7,0 | 8,0 | 9,0 | 0,0      |
         And I run django's "bowl" command
         When I visit the "bowling_scores" page for the "bowler" "carl"
-        Then I should see the score "2" on the web page
-        And I should see the score "6" on the web page
-        And I should see the score "12" on the web page
-        And I should see the score "20" on the web page
-        And I should see the score "36" on the web page
-        And I should see the score "42" on the web page
-        And I should see the score "49" on the web page
-        And I should see the score "57" on the web page
-        And I should see the score "66" on the web page
+        Then I should see "2" on the web page
+        And I should see "6" on the web page
+        And I should see "12" on the web page
+        And I should see "20" on the web page
+        And I should see "36" on the web page
+        And I should see "42" on the web page
+        And I should see "49" on the web page
+        And I should see "57" on the web page
+        And I should see "66" on the web page
